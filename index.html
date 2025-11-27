@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>کارت عروسی</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:system-ui,sans-serif;
+  background:#f8fafc;
+  color:#0f172a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:8px;
+  min-height:100vh;
+}
+
+/* کارت */
+.card{
+  width:95%;
+  max-width:400px;
+  background:rgba(255,255,255,0.85);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* ویدیو */
+.video-wrapper{
+  position:relative;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+video{
+  width:100%;
+  height:auto;
+  border-radius:12px;
+  object-fit:contain;
+  cursor:pointer;
+  display:block;
+}
+
+/* پاپ‌آپ صدا */
+.sound-popup{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:10;
+  border-radius:12px;
+  text-align:center;
+  padding:20px;
+}
+
+.sound-popup p{
+  color:#fff;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+.sound-popup button{
+  padding:8px 16px;
+  border:none;
+  border-radius:8px;
+  background:#10b981;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* آیکون صدا */
+.sound-icon{
+  position:absolute;
+  bottom:8px;
+  left:8px;
+  padding:4px 6px;
+  border-radius:6px;
+  font-size:0.7rem;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  pointer-events:none;
+  transition:all 0.3s ease;
+}
+.sound-icon.pulse{
+  background:rgba(0,0,0,0.6);
+  color:#fff;
+  animation:iconPulse 1s infinite;
+}
+@keyframes iconPulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.1);opacity:0.9;}
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="video-wrapper">
+    <video id="weddingVideo" muted playsinline poster="poster.jpg">
+      <source src="video.mp4" type="video/mp4">
+    </video>
+    <div id="soundPopup" class="sound-popup">
+      <p>آیا می‌خواهید صدای کارت پخش شود؟</p>
+      <button id="allowSound">بله</button>
+      <button id="denySound">خیر</button>
+    </div>
+    <div id="soundIcon" class="sound-icon pulse">
+      <span id="icon">🔇</span>
+      <span id="text">پخش صدا</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const video = document.getElementById('weddingVideo');
+const soundPopup = document.getElementById('soundPopup');
+const allowBtn = document.getElementById('allowSound');
+const denyBtn = document.getElementById('denySound');
+const soundIcon = document.getElementById('soundIcon');
+const icon = document.getElementById('icon');
+const text = document.getElementById('text');
+
+// ویدیو بی‌صدا و آماده پخش
+video.muted = true;
+
+// آپدیت آیکون صدا
+function updateIcon(){
+  if(video.muted){
+    icon.textContent = '🔇';
+    text.style.display = 'inline';
+    soundIcon.classList.add('pulse');
+  } else {
+    icon.textContent = '🔊';
+    text.style.display = 'none';
+    soundIcon.classList.remove('pulse');
+  }
+}
+updateIcon();
+
+// قبل از پخش، ویدیو روی فریم اول یا ثانیه ۱ مکث کند
+video.addEventListener('loadedmetadata', () => {
+  video.currentTime = 1; // مکث روی ثانیه 1
+  video.pause(); // ویدیو متوقف می‌شود
+  soundPopup.style.display = 'flex'; // نمایش پاپ‌آپ
+});
+
+// کلیک روی ویدیو برای قطع/وصل صدا بعد از پخش
+video.addEventListener('click', () => {
+  video.muted = !video.muted;
+  updateIcon();
+});
+
+// دکمه‌های پاپ‌آپ
+allowBtn.addEventListener('click', () => {
+  video.muted = false;
+  updateIcon();
+  soundPopup.style.display = 'none';
+  video.play();
+  video.loop = true;
+});
+
+denyBtn.addEventListener('click', () => {
+  video.muted = true;
+  updateIcon();
+  soundPopup.style.display = 'none';
+  video.play();
+  video.loop = true;
+});
+</script>
+
+</body>
+</html>
