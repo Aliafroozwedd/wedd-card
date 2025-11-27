@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دعوت‌نامه عروسی</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:system-ui,sans-serif;
+  background:#f8fafc;
+  color:#0f172a;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:8px;
+}
+
+/* کارت */
+.card{
+  width:95%;
+  max-width:400px;
+  background:rgba(255,255,255,0.85);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* حالت اولیه مخفی برای انیمیشن ورود */
+.card > *{
+  opacity:0;
+  transform:translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* کلاس فعال برای ورود */
+.card > *.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* تاخیرهای جداگانه */
+.countdown-box{ transition-delay:0.2s; }
+.names{ transition-delay:0.4s; }
+.video-wrapper{ transition-delay:0.6s; }
+.map-box{ transition-delay:0.8s; }
+
+/* شمارش معکوس */
+.countdown-box{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  padding:6px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.9);
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.time-box{
+  background:#222;
+  color:#fff;
+  font-weight:bold;
+  font-size:1rem;
+  padding:6px 10px;
+  border-radius:8px;
+  animation:pulse 1s infinite;
+}
+.time-label{font-size:0.7rem;text-align:center;margin-top:2px;}
+@keyframes pulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+}
+
+/* نام عروس و داماد */
+.names{font-size:16px;font-weight:bold;text-align:center;margin-bottom:4px;}
+
+/* ویدیو */
+.video-wrapper{position:relative;width:100%;}
+video{
+  width:100%;
+  border-radius:12px;
+  object-fit:contain;
+  cursor:pointer;
+  display:block;
+}
+.sound-icon{
+  position:absolute;
+  bottom:8px;
+  left:8px;
+  padding:4px 6px;
+  border-radius:6px;
+  font-size:0.7rem;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  pointer-events:none;
+  transition:all 0.3s ease;
+}
+.sound-icon.pulse{
+  background:rgba(0,0,0,0.6);
+  color:#fff;
+  animation:iconPulse 1s infinite;
+}
+@keyframes iconPulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.1);opacity:0.9;}
+}
+
+/* مسیریابی در کادر جدا */
+.map-box{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  background:#f3f4f6;
+  padding:8px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.map-btn{
+  padding:6px 10px;
+  border:none;
+  background:#6b7280;
+  color:#fff;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.map-links{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:4px;
+}
+
+.map-links a{
+  padding:6px 8px;
+  border-radius:4px;
+  text-decoration:none;
+  background:#e5e7eb;
+  color:#0f172a;
+  font-weight:600;
+  text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="countdown-box" id="countdown">
+    <div><div class="time-box" id="seconds">00</div><div class="time-label">ثانیه</div></div>
+    <div><div class="time-box" id="minutes">00</div><div class="time-label">دقیقه</div></div>
+    <div><div class="time-box" id="hours">00</div><div class="time-label">ساعت</div></div>
+    <div><div class="time-box" id="days">00</div><div class="time-label">روز</div></div>
+  </div>
+
+  <div class="names">مهیا و وحید – ۱۴۰۴/۰۶/۲۲</div>
+
+  <div class="video-wrapper">
+    <video id="weddingVideo" autoplay muted loop playsinline poster="poster.jpg">
+      <source src="video.mp4" type="video/mp4">
+    </video>
+    <div id="soundIcon" class="sound-icon pulse">
+      <span id="icon">🔇</span>
+      <span id="text">پخش صدا</span>
+    </div>
+  </div>
+
+  <!-- مسیریابی بدون iframe -->
+  <div class="map-box">
+    <button class="map-btn">مسیریابی</button>
+    <div class="map-links">
+      <a href="https://www.google.com/maps?q=29.84861326772562,52.360514814688536" target="_blank">Google Maps</a>
+      <a href="https://neshan.org/maps/iframe/places/a4110e1c2c00edcc46c404fa9706d255#c29.849-52.362-18z-0p/29.84866103144646/52.360769678465864" target="_blank">نشان</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// انیمیشن ورود عناصر
+window.addEventListener('load', () => {
+  const elements = document.querySelectorAll('.card > *');
+  elements.forEach(el => el.classList.add('show'));
+});
+
+// ویدیو و صدا
+const v = document.getElementById('weddingVideo');
+const soundIcon = document.getElementById('soundIcon');
+const icon = document.getElementById('icon');
+const text = document.getElementById('text');
+
+v.muted = true;
+v.play().catch(()=>{});
+
+function updateIcon(){
+  if(v.muted){
+    icon.textContent = '🔇';
+    text.style.display = 'inline';
+    soundIcon.classList.add('pulse');
+  } else {
+    icon.textContent = '🔊';
+    text.style.display = 'none';
+    soundIcon.classList.remove('pulse');
+  }
+}
+updateIcon();
+
+v.addEventListener('click', () => {
+  v.muted = !v.muted;
+  updateIcon();
+});
+
+// شمارش معکوس
+const eventDate = new Date("2025-09-13T19:00:00");
+function updateCountdown(){
+  const now = new Date();
+  const diff = eventDate - now;
+  if(diff<=0){['days','hours','minutes','seconds'].forEach(id=>document.getElementById(id).textContent='00'); return;}
+  const days=Math.floor(diff/1000/60/60/24);
+  const hours=Math.floor((diff/1000/60/60)%24);
+  const minutes=Math.floor((diff/1000/60)%60);
+  const seconds=Math.floor((diff/1000)%60);
+  document.getElementById('days').textContent=String(days).padStart(2,'0');
+  document.getElementById('hours').textContent=String(hours).padStart(2,'0');
+  document.getElementById('minutes').textContent=String(minutes).padStart(2,'0');
+  document.getElementById('seconds').textContent=String(seconds).padStart(2,'0');
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
